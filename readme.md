@@ -2,7 +2,7 @@
 
 Herramienta para cambiar MAC de equipos Ligowave serie DLB, 
 
-![](C:\Users\Salomon\Desktop\Change_MAC_Ligowave\img\1.png)
+![](https://raw.githubusercontent.com/jsalonl/Change_MAC_Ligowave/master/img/1.png)
 
 Ingresar a la página y seguir las instrucciones:
 

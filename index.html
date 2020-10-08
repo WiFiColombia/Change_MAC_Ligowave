@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cambiar MAC Ligowave</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col col-md-12">
+        <h3 class="text-center mt-3">Cambiar MAC Ligowave</h3>
+        <h5>Requisitos</h5>
+        <ul>
+          <li>Conexión al equipo</li>
+          <li>Cliente SSH (En Windows, use <a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html" target="_blank">Putty</a>)</li>
+        </ul>
+        <h5>Procedimiento</h5>
+        <ol>
+          <li>Configurar el equipo normalmente</li>
+          <li>
+            Ingrese la información solicitada en el formulario, luego de click en el botón enviar
+            <form id="change" class="form-inline mt-2 row">
+              <div class="input-group col-sm-5 mb-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">Direccion MAC</div>
+                </div>
+                <input type="text" class="form-control" id="MAC" maxlength="17">
+              </div>
+
+              <div class="input-group col-sm-5 mb-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">SSID</div>
+                </div>
+                <input type="text" class="form-control" id="SSID">
+              </div>
+              <div class="col-sm-2">
+                <button type="submit" class="btn btn-primary mb-2">Enviar</button>
+              </div>
+            </form>
+          </li>
+          <li>Ingresar por SSH al equipo</li>
+          <li>
+            Ingresar el siguiente comando (despues de ingresarlo perderá gestión durante 30 segundos)
+            <pre class="mt-1 mb-0 p-1 bg-dark text-white">wlanconfig ath0 destroy</pre>
+          </li>
+          <li>Cerrar la sesión de SSH y volver a ingresar al equipo nuevamente por SSH.</li>
+          <li>
+            Ingresar los siguientes comandos (copiar y click derecho en putty).
+            <span class="content">
+
+            </span>
+          </li>
+        </ol>
+        <span class="badge badge-primary">Nota:</span> Si se reinicia el equipo se perderán los cambios
+      </div>
+    </div>
+  </div>
+<script src="js/jquery-3.0.0.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script>
+  $(document).ready(function(){
+    $('#MAC').on('keyup', function() { 
+    // remove non digits, break it into chunks of 2 and join with a colon
+    this.value = 
+      (this.value.toUpperCase()
+      .replace(/[^\d|A-Z]/g, '')
+      .match(/.{1,2}/g) || [])
+      .join(":")
+    });
+    $('#change').submit(function(e){
+      e.preventDefault();
+      var MAC = $('#MAC').val();
+      var SSID = $('#SSID').val();
+      var content = '<pre class="mt-1 mb-0 p-1 bg-dark text-white">';
+      content += 'ip link set wifi0 address '+MAC+'<br>';
+      content += 'wlanconfig ath0 create wlandev wifi0 wlanmode ap<br>';
+      content += 'iwconfig ath0 essid "'+SSID+'"<br>';
+      content += 'brctl addif br0 ath0<br>';
+      content += 'brctl setfd br0 1<br>';
+      content += 'iwpriv ath0 wds 1<br>';
+      content += 'ifconfig ath0 up<br>';
+      content += 'ifconfig wifi0 up<br>';
+      content += 'ifconfig br0 up';
+      content += '</pre>';
+      $('.content').html(content);
+    });
+  });
+</script>
+</body>
+</html>
